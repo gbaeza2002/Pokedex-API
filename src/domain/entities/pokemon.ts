@@ -6,5 +6,5 @@ export interface Pokemon {
     sprites: string[];
 
     //todo
-    //color: string;
+    color: string;
 }

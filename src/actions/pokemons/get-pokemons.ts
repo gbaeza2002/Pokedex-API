@@ -21,11 +21,11 @@ export const getPokemons = async (page: number, limit: number = 20):Promise<Poke
 
         const pokeApiPokemon = await Promise.all(pokemonPromises)
 
-        const pokemons = pokeApiPokemon.map( (item) => PokemonMapper.pokeApiPokemonToEntity(item.data));
+        const pokemonsPromises = pokeApiPokemon.map( (item) => PokemonMapper.pokeApiPokemonToEntity(item.data));
 
-        console.log(pokemons[0])
+
         
-        return pokemons;
+        return await Promise.all(pokemonsPromises);
 
         
 
