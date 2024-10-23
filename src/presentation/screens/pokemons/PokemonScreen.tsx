@@ -1,5 +1,5 @@
 import { StackScreenProps } from '@react-navigation/stack';
-import { FlatList, Image, ScrollView, StyleSheet, View } from 'react-native';
+import { FlatList, Image, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { RootStackParams } from '../../navigator/StackNavigator';
 import { useQuery } from '@tanstack/react-query';
 import { getPokemonById } from '../../../actions/pokemons';
@@ -10,12 +10,13 @@ import { FadeInImage } from '../../components/ui/FadeInImage';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useContext } from 'react';
 import { ThemeContext } from '../../context/ThemeContext';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 interface Props extends StackScreenProps<RootStackParams, 'PokemonScreen'> { }
 
 export const PokemonScreen = ({ navigation, route }: Props) => {
-    
-    const {isDark} = useContext(ThemeContext);
+
+    const { isDark } = useContext(ThemeContext);
     const { pokemonId } = route.params;
     const { top } = useSafeAreaInsets();
 
@@ -59,13 +60,13 @@ export const PokemonScreen = ({ navigation, route }: Props) => {
 
             {/* Types */}
             <View
-                style={{ flexDirection: 'row', marginHorizontal: 20, marginTop: 10}}>
+                style={{ flexDirection: 'row', marginHorizontal: 20, marginTop: 10 }}>
                 {pokemon.types.map(type => (
                     <Chip
                         key={type}
                         mode="outlined"
                         selectedColor="white"
-                        style={{ marginLeft: 10, backgroundColor:"rgba(0,0,0,0.2)", }}>
+                        style={{ marginLeft: 10, backgroundColor: "rgba(0,0,0,0.2)", }}>
                         {type}
                     </Chip>
                 ))}
@@ -90,6 +91,76 @@ export const PokemonScreen = ({ navigation, route }: Props) => {
                 )}
             />
 
+            {/* abilities */}
+            <Text style={styles.subTitle}>Abilities</Text>
+            <FlatList
+                style={styles.flatLisContainer}
+                data={pokemon.abilities}
+                horizontal
+                keyExtractor={item => item}
+                showsHorizontalScrollIndicator={false}
+                renderItem={({ item }) => (
+                    <Chip selectedColor="white">{Formatter.capitalize(item)}</Chip>
+                )}
+            />
+
+            {/* Stats */}
+            <Text style={styles.subTitle}>Stats</Text>
+
+            <FlatList
+                style={styles.flatLisContainer}
+                data={pokemon.stats}
+                keyExtractor={item => item.name}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                renderItem={({ item }) => (
+                    <View style={styles.statsContainer}>
+                        <Text style={{ flex: 1, color: 'white' }}>
+                            {Formatter.capitalize(item.name)}
+                        </Text>
+                        <Text style={{ color: 'white' }}>{item.value}</Text>
+                    </View>
+                )}
+            />
+            {/* Moves*/}
+            <Text style={styles.subTitle}>Moves</Text>
+            <FlatList
+                style={styles.flatLisContainer}
+                data={pokemon.moves}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                centerContent
+                renderItem={({ item }) => (
+                    <View style={styles.statsContainer}>
+                        <Text style={{ flex: 1, color: 'white' }}>
+                            {Formatter.capitalize(item.name)}
+                        </Text>
+                        <Text style={{ color: 'white' }}>lvl {item.level}</Text>
+                    </View>
+                )}
+            />
+            {/* Games */}
+            <Text style={styles.subTitle}>Games</Text>
+            <FlatList
+                style={styles.flatLisContainer}
+                data={pokemon.games}
+                horizontal
+                keyExtractor={item => item}
+                showsHorizontalScrollIndicator={false}
+                centerContent
+                renderItem={({ item }) => (
+                    <Chip selectedColor="white">{Formatter.capitalize(item)}</Chip>
+                )}
+            />
+
+            <View style={{display: 'flex', alignItems:'center', marginVertical: 30}}>
+                <Pressable
+                    style={styles.button}
+                    onPress={() => navigation.navigate('PokemonScreen', { pokemonId: pokemon.id + 1 })}
+                >
+                    <Text style={{color: '#fff'}}>Siguiente pokemon</Text>
+                </Pressable>
+            </View>
 
             <View style={{ height: 100 }} />
         </ScrollView>
@@ -142,7 +213,22 @@ const styles = StyleSheet.create({
         marginHorizontal: 20,
         alignItems: 'center',
     },
+    flatLisContainer: {
+        backgroundColor: 'rgba(0,0,0,0.2)',
+        marginHorizontal: 10,
+        padding: 5,
+        borderRadius: 20
+    },
+    button: {
+        flex: 1,
+        backgroundColor:'rgba(0,0,0,0.2)',
+        width: '70%',
+        display: 'flex',
+        alignItems: 'center',
+        padding: 10,
+        borderRadius: 50
 
+    }
 });
 
 
